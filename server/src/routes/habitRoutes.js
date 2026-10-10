@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { body } from 'express-validator';
+import { requireAuth } from '../middleware/auth.js';
+import { listHabits,createHabit,updateHabit,archiveHabit,deleteHabit,toggleLog,exportData,importData,adminStats } from '../controllers/habitController.js';
+import { requireAdmin } from '../middleware/auth.js';
+const router=Router(); router.use(requireAuth);
+router.get('/',listHabits);
+router.post('/',[body('name').trim().isLength({min:2,max:100}).withMessage('Habit name must contain 2–100 characters.')],createHabit);
+router.get('/backup/export',exportData); router.post('/backup/import',importData);
+router.get('/admin/stats',requireAdmin,adminStats);
+router.patch('/:id',updateHabit); router.patch('/:id/archive',archiveHabit); router.delete('/:id',deleteHabit); router.post('/:id/toggle',toggleLog);
+export default router;
